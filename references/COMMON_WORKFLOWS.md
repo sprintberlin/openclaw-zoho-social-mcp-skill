@@ -39,11 +39,11 @@ Then re-list:
 python3 scripts/list_media.py --portal-id <portal_id> --brand-id <brand_id>
 ```
 
-Treat a missing file ID as failure. Use the returned file ID in `media_input` when creating a draft or schedule.
+Treat empty `file_path` as failure even when `status` is `success`. The live upload ID arrives in `file_path`. Re-list the library, then use that ID in `media_input` when creating a draft or schedule.
 
-`uploadSocialMedia` also documents a multipart/form-data mode. The JSON/base64 mode is the one MCP actually carries. If a live upload still returns success with no library asset, file a GitHub issue immediately with sanitized evidence. Do not add a GitHub wrapper script.
+`uploadSocialMedia` also documents a multipart/form-data mode. The JSON/base64 mode is the one MCP actually carries. Live evidence: a real PNG returns `file_path` and appears in the library; a degenerate 1x1 PNG returns empty fields and never appears. File a GitHub issue immediately if a later live upload reports success with empty `file_path`. Do not add a GitHub wrapper script.
 
-[zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) remains the companion for Zoho apps whose MCP upload tools drop binary parameters. Social is different: the live schema takes a JSON string, not `format: binary`. Keep the bridge linked, and only extend it if Social's JSON upload proves to drop bytes the same way WorkDrive does.
+[zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) remains the companion for Zoho apps whose MCP upload tools drop binary parameters. Social images stay in this skill.
 
 ## 3. Draft a post
 

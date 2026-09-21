@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import io
 from pathlib import Path
 import sys
 import tempfile
@@ -128,6 +129,51 @@ class UploadMediaTests(unittest.TestCase):
         with mock.patch.object(upload_media.ENDPOINT, "configure"):
             with mock.patch.object(upload_media, "headers_from", return_value={"portal_id": "p", "brand_id": "b"}):
                 with mock.patch.object(upload_media, "call", return_value={"status": "success", "data": {"data": {}}}):
+                    code = upload_media.main(
+                        ["--portal-id", "p", "--brand-id", "b", "--image-url", "https://example.com/a.png"]
+                    )
+        self.assertEqual(code, 1)
+
+    def test_upload_live_shape_reports_file_path_as_id(self):
+        live_shape = {
+            "status": "success",
+            "data": {
+                "data": {
+                    "file_path": "4662442000000184002",
+                    "file_name": "hero.png",
+                    "file_size": "1060",
+                    "width": 400,
+                    "height": 400,
+                    "status": "success",
+                }
+            },
+        }
+        with mock.patch.object(upload_media.ENDPOINT, "configure"):
+            with mock.patch.object(upload_media, "headers_from", return_value={"portal_id": "p", "brand_id": "b"}):
+                with mock.patch.object(upload_media, "call", return_value=live_shape):
+                    with mock.patch("sys.stdout", new_callable=io.StringIO) as out:
+                        code = upload_media.main(
+                            ["--portal-id", "p", "--brand-id", "b", "--image-url", "https://example.com/a.png"]
+                        )
+        self.assertEqual(code, 0)
+        self.assertIn("4662442000000184002", out.getvalue())
+
+    def test_upload_degenerate_image_fake_success_is_failure(self):
+        fake = {
+            "status": "success",
+            "data": {
+                "data": {
+                    "file_path": "",
+                    "file_name": "",
+                    "preview_url": "",
+                    "file_size": "",
+                    "status": "",
+                }
+            },
+        }
+        with mock.patch.object(upload_media.ENDPOINT, "configure"):
+            with mock.patch.object(upload_media, "headers_from", return_value={"portal_id": "p", "brand_id": "b"}):
+                with mock.patch.object(upload_media, "call", return_value=fake):
                     code = upload_media.main(
                         ["--portal-id", "p", "--brand-id", "b", "--image-url", "https://example.com/a.png"]
                     )
