@@ -1,6 +1,6 @@
 ---
 name: "zoho-social-mcp"
-description: "Zoho Social via MCP with action catalog, least-privilege profiles, portal/brand/channel helpers, media upload, and verified draft/schedule workflows."
+description: "Zoho Social via MCP with action catalog, least-privilege profiles, portal/brand/channel helpers, media upload, and verified draft/schedule workflows. Use whenever a task involves Zoho Social: creating, validating, scheduling, or publishing posts, uploading or listing media library assets, or resolving portals, brands, and channels."
 ---
 
 # Zoho Social MCP
