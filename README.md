@@ -121,9 +121,9 @@ Zoho Social currently documents 31 MCP tools. Live `uploadSocialMedia` does **no
 
 `uploadSocialMediaFromUrl` fetches a remote image by URL.
 
-Do not paste base64 into chat. `scripts/upload_media.py --file` reads the local bytes and sends the complete data URI. Treat a missing file ID as failure and re-list the library with `list_media.py`.
+Do not paste base64 into chat. `scripts/upload_media.py --file` reads the local bytes and sends the complete data URI. Live `uploadSocialMedia` returns the usable ID in `file_path`. Treat empty `file_path` as failure even when `status` is `success`, then re-list the library with `list_media.py`. Degenerate images can report success and still never appear.
 
-The companion [zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) remains required for Books, CRM, Projects, and WorkDrive, where MCP upload tools silently drop bytes. Keep it linked from this skill. Extend the bridge for Social only after a live upload reports success with no library asset.
+The companion [zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) remains required for Books, CRM, Projects, and WorkDrive, where MCP upload tools silently drop bytes. Social image uploads go through this skill. A live 400x400 PNG landed in the library with SHA-256 matching the source bytes. Do not extend the bridge for Social unless a later live upload reports success with empty `file_path` and no library asset.
 
 ## Social Action Catalog and Profiles
 
@@ -198,9 +198,9 @@ The authenticated user cannot see a Social workspace. Stop. Do not invent portal
 
 The MCP connection token may have expired or may not include the required scope. Go to [mcp.zoho.eu](https://mcp.zoho.eu), revoke and reconnect the affected app.
 
-### Upload reported success but no file ID
+### Upload reported success but empty `file_path`
 
-Treat it as failure. Re-list the media library. File a GitHub issue with sanitized evidence. Do not add a GitHub wrapper script.
+Treat it as failure. Live uploads put the usable ID in `file_path`, not `id`. Re-list the media library. File a GitHub issue with sanitized evidence. Do not add a GitHub wrapper script.
 
 ## Repository Files
 

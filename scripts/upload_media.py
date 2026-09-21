@@ -88,7 +88,10 @@ def main(argv=None):
     data = result.get("data", result)
     if isinstance(data, dict) and isinstance(data.get("data"), dict):
         data = data["data"]
-    file_id = field(data if isinstance(data, dict) else {}, ["id", "file_id", "media_id"], "")
+    payload = data if isinstance(data, dict) else {}
+    # Live evidence 2026-09-21: the usable ID arrives in file_path, not id, and a
+    # success status with every field empty means Zoho silently dropped the image.
+    file_id = field(payload, ["file_path", "id", "file_id", "media_id"], "")
     if not file_id:
         print("Error: upload reported success but returned no file ID", file=sys.stderr)
         return 1
@@ -96,8 +99,8 @@ def main(argv=None):
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
     print(f"file_id: {file_id}")
-    name = field(data if isinstance(data, dict) else {}, ["file_name", "name", "filename"], "")
-    if name != "-":
+    name = field(payload, ["file_name", "name", "filename"], "")
+    if name and name != "-":
         print(f"name:    {name}")
     print("Re-list the library with list_media.py before attaching this ID to a post.")
     return 0

@@ -95,9 +95,9 @@ python3 scripts/upload_media.py --portal-id <portal_id> --brand-id <brand_id> --
 python3 scripts/list_media.py --portal-id <portal_id> --brand-id <brand_id>
 ```
 
-Treat a missing file ID as failure. Re-list the library before attaching the ID in `media_input`.
+The live upload ID arrives in `file_path`, not `id`. Treat empty `file_path` as failure even when `status` is `success`. Re-list the library before attaching the ID in `media_input`. Degenerate images (for example a 1x1 PNG) can return empty fields and never appear in the library.
 
-[zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) is the companion for Zoho apps whose MCP upload tools declare `format: binary` and drop bytes. Social is different today: the live tool takes a JSON string. Keep the bridge linked. If a live Social upload reports success with no library asset, file issues in both repositories immediately and only then extend the bridge.
+[zoho-attachment-bridge](https://github.com/sprintberlin/zoho-attachment-bridge) remains required for Books, CRM, Projects, and WorkDrive, where MCP upload tools drop `format: binary` bytes. Social is different: a real PNG uploaded as a complete data URI lands in the media library. Keep the bridge linked, but do not route Social images through it unless a later live upload reports success with empty `file_path` and no library asset.
 
 ## Common calls
 
@@ -167,6 +167,6 @@ Query the catalog with `scripts/lookup_actions.py` instead of loading `actions.j
 - **No endpoint configured**: set `ZOHO_SOCIAL_MCP_URL`, use `--profile`, or pass `--mcp-url`; never print the value.
 - **Empty portals / `USER_INACTIVE_IN_PORTAL`**: the authenticated user cannot see a Social workspace. Stop and report it. Do not switch customers.
 - **Unknown portal or brand ID**: resolve through lookup tools; do not guess.
-- **Upload reported success but no file ID**: treat as failure. Re-list the library. File a GitHub issue with sanitized evidence.
+- **Upload reported success but empty `file_path`**: treat as failure. Re-list the library. File a GitHub issue with sanitized evidence.
 - **OAuth scope error**: reconnect the affected MCP connection; never switch to another customer's endpoint.
 - Zoho Social contains customer content and publishing credentials. Load only required records and never copy post text, media, or IDs into chats, logs, or repositories.
