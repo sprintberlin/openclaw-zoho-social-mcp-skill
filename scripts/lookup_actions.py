@@ -13,16 +13,16 @@ Examples:
   python3 scripts/lookup_actions.py --tasks
 
   # Inspect actions in a specific profile (resolved with inheritance)
-  python3 scripts/lookup_actions.py --profile file-browser
+  python3 scripts/lookup_actions.py --profile social-creator
 
   # Inspect actions for a task recipe
-  python3 scripts/lookup_actions.py --task file-and-folder-browsing
+  python3 scripts/lookup_actions.py --task media-asset-management
 
   # Search actions by keyword in name or description
-  python3 scripts/lookup_actions.py --search "folder"
+  python3 scripts/lookup_actions.py --search "draft"
 
   # Search and return only action names (compact for copying into MCP setup)
-  python3 scripts/lookup_actions.py --search "leave" --names-only
+  python3 scripts/lookup_actions.py --search "upload" --names-only
 
   # Validate the catalog and profiles for consistency
   python3 scripts/lookup_actions.py --validate
